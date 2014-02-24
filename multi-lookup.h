@@ -20,7 +20,6 @@
 #include <netdb.h>
 
 int dnslookup(const char* hostname, char* firstIPstr, int maxSize);
-void *TaskCode(void *argument)
 
 
 #endif
