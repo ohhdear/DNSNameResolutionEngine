@@ -92,11 +92,25 @@ int readFile(char *fileName){
 					break;
 				}
 
-
+				// wake resolver thread to process queue 
+				if((rc = sem_post(&resolverSem)) < 0) {
+					fprintf(stderr, "sem_post failed to wake resolver thread = %d  <%s> \n", errno, strerror(errno));
+					break;
+				}
 
 			}
+		
+		if(rc < 0) {
+			break;
 		}	
+
+		}
+
+	fclose(file);
+
 	}
+
+	return rc;
 
 }
 
