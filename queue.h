@@ -20,25 +20,33 @@
 #define QUEUEMAXSIZE 50
 
 #define QUEUE_FAILURE -1
-#define QUEUE_SUCCESS 0
+#define QUEUE_SIZE    -2
+#define QUEUE_FULL    -3
+#define QUEUE_EMPTY   -4
+#define QUEUE_SUCCESS  0
 
-typedef struct queue_node_s{
+typedef struct queue_node_s
+{
+    int   queued;
     void* payload;
+    int   size;
 } queue_node;
 
-typedef struct queue_s{
+typedef struct queue_s
+{
     queue_node* array;
     int front;
     int rear;
     int maxSize;
+    int maxPayloadSize;
 } queue;
 
-/* Function to initilze a new queue
+/* Function to initialize a new queue
  * On success, returns queue size
  * On failure, returns QUEUE_FAILURE
  * Must be called before queue is used
  */
-int queue_init(queue* q, int size);
+int queue_init(queue* q, int size, int payloadSize);
 
 /* Function to test if queue is empty
  * Returns 1 if empty, 0 otherwise
@@ -54,12 +62,12 @@ int queue_is_full(queue* q);
  * Returns QUEUE_SUCCESS if the push successeds.
  * Returns QUEUE_FAILURE if the push fails
  */
-int queue_push(queue* q, void* payload);
+int queue_push(queue* q, void* payload, int size);
 
 /* Function to return element from queue in FIFO order
  * Returns NULL pointer if queue is empty
  */
-void* queue_pop(queue* q);
+int queue_pop(queue* q, void *payload, int size);
 
 /* Function to free queue memory */
 void queue_cleanup(queue* q);

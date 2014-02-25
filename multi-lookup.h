@@ -8,18 +8,6 @@
 #ifndef _MULTI_LOOKUP_H_
 #define _MULTI_LOOKUP_H_
 
-#include <pthread.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-
-int dnslookup(const char* hostname, char* firstIPstr, int maxSize);
-
+int readFile(char *fileName)
 
 #endif
