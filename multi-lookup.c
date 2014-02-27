@@ -30,6 +30,8 @@
 #define MAX_INPUT_FILES 10
 #define MAX_RESOLVER_THREADS 10
 #define MIN_RESOLVER_THREADS 2
+#define REQUESTOR_Q_SIZE 10
+#define RESOLVER_Q_SIZE 100 
 
 pthread_mutex_t resolverQLock;
 pthread_mutex_t requesterQLock;
@@ -99,7 +101,7 @@ int readFile(char *fileName){
 				}
 
 			}
-		
+
 		if(rc < 0) {
 			break;
 		}	
@@ -114,10 +116,85 @@ int readFile(char *fileName){
 
 }
 
+void *requesterThread(void *threadNum){
+	int rc = 0;
+	int queue_rc;
+
+	char fileNames[MAX_INPUT_FILES];
+
+	while(1){
+		sem_wait(&resquesterSem);
+		pthread_mutex_lock(&requestorQLock);
+		queue_rc = queue_pop(&requesterQ, fileNames, MAX_INPUT_FILES);
+		pthread_mutex_unlock(&requestorQLock);
+
+		if (queue_rc == QUEUE_EMPTY){
+			continue;
+		}
+
+		if (queue_rc == QUEUE_FAILURE || queue_rc == QUEUE_SIZE) {
+			fprintf(stderr, "Queue pop failed\n");
+			continue;
+		}
+
+		readfile(fileNames);
+	}
+	return NULL;
+}
+
+void *resolverThread(void *threadNum){
+	int rc = 0;
+	int queue_rc;
+
+	char hostNames[DNS_LENGTH];
+	char ipAddrs[DNS_LENGTH];
+	FILE *outFile;
+
+	while(1){
+		sem_wait(&resolverSem);
+		pthread_mutex_lock(&resolverQLock);
+		queue_rc = queue_pop(&resolverQ, hostNames, MAX_INPUT_FILES);
+		pthread_mutex_unlock(&resolverQLock);
+
+		if (queue_rc == QUEUE_EMPTY){
+			continue;
+		}
+
+		if (queue_rc == QUEUE_FAILURE || queue_rc == QUEUE_SIZE) {
+			fprintf(stderr, "Queue pop failed\n");
+			continue;
+		}
+
+		rc = dnslookup(hostNames, ipAddrs, DNS_LENGTH);
+
+		//explore reason for util failure check?
+		if ((ipAddrs[0] == '\0') || (rc == UTIL_FAILURE)) {
+			ipAddrs[0] = ' ';
+			ipAddrs[1] = '\0';
+		}
+
+		outFile = fopen(outputFileName, "a");
+
+		fprintf(outFile, "%s, %s \n", hostNames, ipAddrs);
+		fclose(outFile);
+	}
+	return NULL;
+}
+
 int main(int argc, char* argv []){
- 	//fprintf(stderr, "something\n");
+	int cores = sysconf(_SC_NPROCESSORS_ONLN);
+
+ 	sem_init(&requestorSem, 0, 0); // look at man pages for sem_init
+ 	sem_init(&resolverSem, 0, 0);
+
+ 	queue_init(&requesterQ, REQUESTOR_Q_SIZE, DNS_LENGTH);
+ 	queue_init(&resolverQ, RESOLVER_Q_SIZE, DNS_LENGTH);
+
+	pthread_mutex_init(&requestorQLock, NULL); //man pages for why NULL
+	pthread_mutex_init(&resolverQLock, NULL);
 
 
+	pthread_create(requesterPool_p); 
 }
 
 
