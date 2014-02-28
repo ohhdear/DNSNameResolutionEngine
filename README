@@ -3,5 +3,3 @@ In order to build the program, simply run "make" command in terminal.
 To run, the usage is: "./multi-lookup <inputFilePath> <inputFilePath> ... <outputFilePath>". 
 
 To run with valgrind, run:  "valgrind ./multi-lookup <inputFilePath> <inputFilePath> ... <outputFilePath>". 
-
-All files included in zip will allow program to run properly, simply type "./multi-lookup <inputFilePath> <inputFilePath> ... <outputFilePath>", as the program is precompiled. 
