@@ -1,9 +1,6 @@
 /*
  * File: multi-lookup.c
- * Author: Shannon Moore
- * Original Creators: Andy Sayler
  * Project: OS Programming Assignment 2
- * Help Citation: Ryan Roden
  */
 
 #include <stdlib.h>
