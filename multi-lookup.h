@@ -1,7 +1,5 @@
 /* Multi-threaded DNS Name Resolution Engine that
  * resolves IP addresses to their DNS names.
- * 
- * Shannon Moore - CSCI 3753 PA 2 
  *
  */
 
