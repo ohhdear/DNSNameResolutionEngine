@@ -12,6 +12,6 @@ int readFile(char *fileName);
 void *requesterThread(void *threadNum);
 void *resolverThread(void *threadNum);
 int doesFileExist(char *fileName);
-int checkOutputFilePath(char *outputFile);
+int checkOutputFilePath(char *outputFile);	
 
 #endif
