@@ -8,6 +8,10 @@
 #ifndef _MULTI_LOOKUP_H_
 #define _MULTI_LOOKUP_H_
 
-int readFile(char *fileName)
+int readFile(char *fileName);
+void *requesterThread(void *threadNum);
+void *resolverThread(void *threadNum);
+int doesFileExist(char *fileName);
+int checkOutputFilePath(char *outputFile);
 
 #endif
